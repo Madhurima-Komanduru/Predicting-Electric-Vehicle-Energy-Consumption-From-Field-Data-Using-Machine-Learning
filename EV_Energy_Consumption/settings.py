@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-g@tz*ou4x^iu5wiw^7-kdcsg8k0gofyy&5bt@)ppg#8w-va01f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['predicting-electric-vehicle-energy.onrender.com']
 
 
 # Application definition
