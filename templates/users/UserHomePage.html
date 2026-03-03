@@ -1,0 +1,42 @@
+{% extends 'users/userbase.html' %}
+{% load static %}
+
+{% block contents %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Width Image</title>
+    <style>
+        /* Ensure the page takes the full viewport width with no default margins */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        /* Container that holds the image */
+        .full-image-wrapper {
+            width: 100%;          /* spans entire width of browser */
+            overflow: hidden;     /* prevents accidental horizontal scroll */
+        }
+
+        /* The image itself */
+        .full-width-image {
+            display: block;       /* removes the small inline gap */
+            width: 100%;          /* stretch to the full width */
+            height: auto;         /* maintain aspect ratio */
+        }
+    </style>
+</head>
+<body>
+    <div class="full-image-wrapper">
+        <!-- The image will scale to the entire browser width -->
+        <img src="{{ MEDIA_URL }}bike copy.jpg" alt="Bike" class="full-width-image">
+    </div>
+</body>
+</html>
+
+{% endblock %}

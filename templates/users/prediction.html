@@ -1,0 +1,232 @@
+{% extends 'users/userbase.html' %}
+{% load static %}
+{% block contents %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EV Energy Consumption</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        width: 70%;
+        margin: 40px auto;
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+    form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 30px;
+    }
+    label {
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 6px;
+        display: block;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #dcdde1;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: 0.3s ease;
+    }
+    input:focus, select:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0,123,255,0.3);
+    }
+    button {
+        grid-column: span 2;
+        background: #007bff;
+        color: #fff;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    button:hover {
+        background: #0056b3;
+    }
+
+    /* === Modal Styles === */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    .modal-content {
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        animation: fadeIn 0.4s ease;
+    }
+    .modal-content h3 {
+        margin-top: 0;
+        font-size: 22px;
+        color: #2c3e50;
+    }
+    .modal-content p {
+        font-size: 18px;
+        color: #27ae60;
+        margin: 15px 0;
+    }
+    .close-btn {
+        background: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .close-btn:hover {
+        background: #0056b3;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9);}
+        to { opacity: 1; transform: scale(1);}
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>⚡ EV Energy Consumption Prediction</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label>Speed (km/h)</label>
+            <input type="number" step="0.01" min="0" name="Speed_kmh" required>
+        </div>
+        <div>
+            <label>Acceleration (m/s²)</label>
+            <input type="number" step="0.01" min="0" name="Acceleration_ms2" required>
+        </div>
+        <div>
+            <label>Battery State (%)</label>
+            <input type="number" step="0.01" min="0" name="Battery_State_%" required>
+        </div>
+        <div>
+            <label>Driving Mode</label>
+            <select name="Driving_Mode">
+                <option value="Eco">Eco</option>
+                <option value="Normal">Normal</option>
+                <option value="Sport">Sport</option>
+            </select>
+        </div>
+        <div>
+            <label>Road Type</label>
+            <select name="Road_Type">
+                <option value="Highway">Highway</option>
+                <option value="City">City</option>
+                <option value="Rural">Rural</option>
+            </select>
+        </div>
+        <div>
+            <label>Traffic Condition</label>
+            <select name="Traffic_Condition">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+        <div>
+            <label>Weather Condition</label>
+            <select name="Weather_Condition">
+                <option value="Clear">Clear</option>
+                <option value="Rainy">Rainy</option>
+                <option value="Snowy">Snowy</option>
+                <option value="Foggy">Foggy</option>
+            </select>
+        </div>
+        <div>
+            <label>Temperature (°C)</label>
+            <input type="number" step="0.01" name="Temperature_C" required>
+        </div>
+        <div>
+            <label>Humidity (%)</label>
+            <input type="number" min="0" step="0.01" name="Humidity_%" required>
+        </div>
+        <div>
+            <label>Wind Speed (m/s)</label>
+            <input type="number" step="0.01" min="0" name="Wind_Speed_ms" required>
+        </div>
+        <div>
+            <label>Vehicle Weight (kg)</label>
+            <input type="number" step="0.01" min="0" name="Vehicle_Weight_kg" required>
+        </div>
+        <div>
+            <label>Distance Travelled (km)</label>
+            <input type="number" step="0.01" min="0" name="Distance_Travelled_km" required>
+        </div>
+
+        <button type="submit">🚗 Predict</button>
+    </form>
+</div>
+
+<!-- Modal popup -->
+<div class="modal-overlay" id="predictionModal">
+    <div class="modal-content">
+        <h3>Prediction Result</h3>
+        <p id="predictionText"></p>
+        <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+{% if prediction %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Insert the prediction text
+        document.getElementById("predictionText").textContent =
+            "Predicted Energy Consumption: {{ prediction|floatformat:2 }} kWh";
+        // Show the modal
+        document.getElementById("predictionModal").style.display = "flex";
+    });
+    function closeModal() {
+        document.getElementById("predictionModal").style.display = "none";
+    }
+</script>
+{% endif %}
+
+{% if error %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("predictionText").textContent = "Error: {{ error|escapejs }}";
+        document.getElementById("predictionModal").style.display = "flex";
+    });
+</script>
+{% endif %}
+
+</body>
+</html>
+
+{% endblock %}

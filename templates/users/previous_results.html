@@ -1,0 +1,105 @@
+{% extends 'users/userbase.html' %}
+{% block contents %}
+
+<style>
+    /* Container */
+    .results-container {
+        margin-top: 30px;
+        margin-bottom: 40px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Heading */
+    .results-container h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.8rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* Table styling */
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .results-table thead {
+        background: #4a90e2;
+        color: #fff;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 12px 15px;
+        text-align: center;
+        border: 1px solid #ddd;
+        font-size: 0.95rem;
+    }
+
+    .results-table tbody tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+
+    .results-table tbody tr:hover {
+        background: #e9f3ff;
+        transition: background 0.3s ease;
+    }
+
+    /* No results row */
+    .results-table .no-results td {
+        text-align: center;
+        font-style: italic;
+        color: #777;
+    }
+</style>
+
+<div class="container results-container">
+    <h2>Previous EV Energy Predictions</h2>
+    
+    <table class="results-table table">
+        <thead>
+            <tr>
+                <th>Speed (km/h)</th>
+                <th>Acceleration (m/s²)</th>
+                <th>Battery State (%)</th>
+                <th>Driving Mode</th>
+                <th>Road Type</th>
+                <th>Traffic Condition</th>
+                <th>Weather</th>
+                <th>Humidity (%)</th>
+                <th>Wind Speed (m/s)</th>
+                <th>Vehicle Weight (kg)</th>
+                <th>Distance (km)</th>
+                <th>Predicted Energy (kWh)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in results %}
+            <tr>
+                <td>{{ r.Speed_kmh }}</td>
+                <td>{{ r.Acceleration_ms2 }}</td>
+                <td>{{ r.Battery_State }}</td>
+                <td>{{ r.Driving_Mode }}</td>
+                <td>{{ r.Road_Type }}</td>
+                <td>{{ r.Traffic_Condition }}</td>
+                <td>{{ r.Weather_Condition }}</td>
+                <td>{{ r.Humidity }}</td>
+                <td>{{ r.Wind_Speed }}</td>
+                <td>{{ r.Vehicle_Weight }}</td>
+                <td>{{ r.Distance_Travelled }}</td>
+                <td>{{ r.Predicted_Energy }}</td>
+            </tr>
+            {% empty %}
+            <tr class="no-results">
+                <td colspan="12">No results found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
